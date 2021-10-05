@@ -44,10 +44,35 @@ namespace Api_dotnet.Controllers
         [HttpPut]
         public async Task<IActionResult> PutBeer([FromBody] Beer beer)
         {
-            if (!BeerExists(beer.Name))
+            if (!BeerExists(beer.Id))
+            {
+                return NotFound();
+            }
+
+            if (IsBeerUpdate(beer))
+            {
+                return BadRequest("Please update Beer information");
+            }
+
+            try
             {
                 _context.Entry(beer).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
             }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+
+            return Ok("Beer update");
+        }
+
+        // POST: api/Beer
+        [HttpPost]
+        public async Task<ActionResult<Beer>> PostUtilisateur(Beer beer)
+        {
+            _context.Beer.Add(beer);
 
             try
             {
@@ -57,16 +82,6 @@ namespace Api_dotnet.Controllers
             {
                 throw exception;
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Beer
-        [HttpPost]
-        public async Task<ActionResult<Beer>> PostUtilisateur(Beer beer)
-        {
-            _context.Beer.Add(beer);
-            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetBeer", new { id = beer.Id }, beer);
         }
@@ -87,9 +102,14 @@ namespace Api_dotnet.Controllers
             return NoContent();
         }
 
-        private bool BeerExists(string name)
+        private bool BeerExists(long Id)
         {
-            return _context.Beer.Any(e => e.Name == name);
+            return _context.Beer.Any(e => e.Id == Id);
+        }
+
+        private bool IsBeerUpdate(Beer beer)
+        {
+            return _context.Beer.Any(e => e == beer);
         }
     }
 }

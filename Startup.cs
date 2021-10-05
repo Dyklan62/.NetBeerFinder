@@ -24,6 +24,17 @@ namespace Api_dotnet
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://example.com/",
+                                            "http://www.contoso.com/%22");
+
+                    });
+            });
+
             services.AddControllers();
 
             var serverVersion = new MySqlServerVersion(new Version(5, 7, 24));
@@ -65,6 +76,8 @@ namespace Api_dotnet
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 

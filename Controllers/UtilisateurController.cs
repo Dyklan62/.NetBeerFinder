@@ -40,12 +40,74 @@ namespace Api_dotnet.Controllers
             return utilisateur;
         }
 
+        // GET: api/Utilisateur/login
+        [HttpGet("login")]
+        public async Task<ActionResult<Utilisateur>> Login(string email, string mdp)
+        {
+
+            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(mdp))
+            {
+                return BadRequest("Please enter login informations");
+            }
+
+            var utilisateur = await _context.Utilisateur.FindAsync(email);
+
+            if (utilisateur == null)
+            {
+                return NotFound("Account not found");
+            }
+
+            return null;
+        }
+
+        // PUT: api/Utilisateur
+        [HttpPut]
+        public async Task<IActionResult> PutUtilisateur([FromBody] Utilisateur utilisateur)
+        {
+            if (!UtilisateurExists(utilisateur.Id))
+            {
+                return NotFound();
+            }
+
+            if (IsUtilisateurUpdate(utilisateur))
+            {
+                return BadRequest("Please update Utilisateur information");
+            }
+
+            try
+            {
+                _context.Entry(utilisateur).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+
+            return Ok("Utilisateur update");
+        }
+
         // POST: api/Utilisateur
         [HttpPost]
         public async Task<ActionResult<Utilisateur>> PostUtilisateur(Utilisateur utilisateur)
         {
+
+            if (UtilisateurExists(utilisateur.Id))
+            {
+                return Conflict("utilisateur already exist");
+            }
+
             _context.Utilisateur.Add(utilisateur);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
 
             return CreatedAtAction("GetUtilisateur", new { id = utilisateur.Id }, utilisateur);
         }
@@ -66,9 +128,14 @@ namespace Api_dotnet.Controllers
             return NoContent();
         }
 
-        private bool UtilisateurExists(long id)
+        private bool UtilisateurExists(long Id)
         {
-            return _context.Utilisateur.Any(e => e.Id == id);
+            return _context.Utilisateur.Any(e => e.Id == Id);
+        }
+
+        private bool IsUtilisateurUpdate(Utilisateur utilisateur)
+        {
+            return _context.Utilisateur.Any(e => e == utilisateur);
         }
     }
 }
