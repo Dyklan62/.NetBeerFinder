@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Api_dotnet.Controllers
 {
-    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
-    [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {

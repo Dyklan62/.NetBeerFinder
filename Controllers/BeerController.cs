@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -40,6 +42,33 @@ namespace Api_dotnet.Controllers
             return beer;
         }
 
+        // GET: api/Beer/Type
+        [HttpGet("search/{Type}")]
+        public async Task<IActionResult> GetBeerByType(string type)
+        {
+            var beers = await _context.Beers.FirstAsync(e => e.Type == type); ;
+            if (beers == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(beers);
+        }
+
+        // GET: api/Beer/Name
+        [HttpGet("search/{Name}")]
+        public async Task<IActionResult> GetBeerByName(string name)
+        {
+            var beers = await _context.Beers.FirstAsync(e => e.Name == name); ;
+            if (beers == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(beers);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         // PUT: api/Beer
         [HttpPut]
         public async Task<IActionResult> PutBeer([FromBody] Beer beer)
@@ -68,6 +97,7 @@ namespace Api_dotnet.Controllers
             return Ok("Beer update");
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         // POST: api/Beer
         [HttpPost]
         public async Task<ActionResult<Beer>> PostUtilisateur(Beer beer)
@@ -109,7 +139,11 @@ namespace Api_dotnet.Controllers
 
         private bool IsBeerUpdate(Beer beer)
         {
-            return _context.Beers.Any(e => e == beer);
+
+            var predicate = _context.Beers.Any(e => e.Id == beer.Id && e.Name == beer.Name && e.Tagline == beer.Tagline
+            && e.Type == beer.Type && e.Url == beer.Url && e.Description == beer.Description && e.Date == beer.Date && e.Abv == beer.Abv);
+            Console.WriteLine(predicate);
+            return predicate;
         }
     }
 }

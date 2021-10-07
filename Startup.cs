@@ -51,7 +51,6 @@ namespace Api_dotnet
             })
                 .AddJwtBearer(options =>
                 {
-                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -64,7 +63,6 @@ namespace Api_dotnet
                     };
                 });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
             var serverVersion = new MySqlServerVersion(new Version(5, 7, 24));
 
@@ -94,13 +92,13 @@ namespace Api_dotnet
 
             app.UseHttpsRedirection();
 
-            app.UseCors();
-
             app.UseAuthentication();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {
