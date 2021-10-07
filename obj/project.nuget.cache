@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "iaCSuE855ITkjLAuXN1FWJV84Oahs4VloznsBl334FXKBI3M7lHaRodvFdAK/gAiws12BVpHLiaABxchbWphRg==",
+  "dgSpecHash": "kaYgVrAY4tU2ViH8bEHK1TlN75YI5eBflaBYbO4208qwXm6dIniv0QT4A+HdQPuGXlywVEYVVLuMZfF1DKmVNA==",
   "success": true,
   "projectFilePath": "E:\\Google_Drive\\Efficom\\Master 1\\.NET\\projet_back\\Api_dotnet\\Api_dotnet.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\dyklan\\.nuget\\packages\\bcrypt.net-next\\4.0.2\\bcrypt.net-next.4.0.2.nupkg.sha512",
     "C:\\Users\\dyklan\\.nuget\\packages\\bouncycastle.netcore\\1.8.3\\bouncycastle.netcore.1.8.3.nupkg.sha512",
     "C:\\Users\\dyklan\\.nuget\\packages\\google.protobuf\\3.11.4\\google.protobuf.3.11.4.nupkg.sha512",
     "C:\\Users\\dyklan\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

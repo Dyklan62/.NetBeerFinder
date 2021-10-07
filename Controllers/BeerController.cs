@@ -68,7 +68,6 @@ namespace Api_dotnet.Controllers
             return Ok(beers);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         // PUT: api/Beer
         [HttpPut]
         public async Task<IActionResult> PutBeer([FromBody] Beer beer)

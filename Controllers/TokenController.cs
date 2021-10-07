@@ -7,6 +7,9 @@ using JwtAuthentification.server.Interface.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using BC = BCrypt.Net.BCrypt;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace JwtAuthentication.Server.Controllers
 {
@@ -28,23 +31,78 @@ namespace JwtAuthentication.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] Login login)
+        public async Task<IActionResult> Login([FromBody] Login login)
         {
             IActionResult result = this.Unauthorized();
 
-            if (!String.IsNullOrEmpty(login.Email) && !String.IsNullOrEmpty(login.MotDePasse))
+            if (String.IsNullOrEmpty(login.Email) && String.IsNullOrEmpty(login.MotDePasse))
             {
-                var utilisateur = _context.Utilisateur.Where(u => u.Email.Equals(login.Email) && u.MotDePasse.Equals(login.MotDePasse)); ;
-
-                utilisateur.First().Token = _tokenService.BuildToken(login.Email);
-
-                result = this.Ok(utilisateur.First().Token);
+                return BadRequest("email or password empty");
             }
 
-            return result;
+            var utilisateur = _context.Utilisateur.Single(u => u.Email.Equals(login.Email)); ;
+
+
+            if (utilisateur == null)
+            {
+                return BadRequest("bad account");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(login.MotDePasse, utilisateur.MotDePasse))
+            {
+                return BadRequest("bad password");
+            }
+
+            utilisateur.Token = _tokenService.BuildToken(login.Email);
+
+            try
+            {
+                _context.Entry(utilisateur).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+
+            return this.Ok(utilisateur.Token);
+
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] Utilisateur utilisateur)
+        {
+            IActionResult result = this.Unauthorized();
 
+            if (String.IsNullOrEmpty(utilisateur.Email))
+            {
+                return BadRequest("email empty");
+            }
+
+            var user = _context.Utilisateur.SingleOrDefault(u => u.Email.Equals(utilisateur.Email)); ;
+            user.Token = "";
+
+            if (utilisateur == null)
+            {
+                return BadRequest("bad account");
+            }
+
+            try
+            {
+                _context.Entry(user).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+
+            return this.Ok();
+
+        }
 
     }
 }

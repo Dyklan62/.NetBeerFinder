@@ -10,7 +10,6 @@ using Models;
 
 namespace Api_dotnet.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     public class UtilisateurController : ControllerBase
     {
@@ -40,26 +39,6 @@ namespace Api_dotnet.Controllers
             }
 
             return utilisateur;
-        }
-
-        // GET: api/Utilisateur/login
-        [HttpGet("login")]
-        public async Task<ActionResult<Utilisateur>> Login(Utilisateur user)
-        {
-
-            if (String.IsNullOrEmpty(user.Email) || String.IsNullOrEmpty(user.MotDePasse))
-            {
-                return BadRequest("Please enter login informations");
-            }
-
-            var utilisateur = await _context.Utilisateur.FindAsync(user);
-
-            if (utilisateur == null)
-            {
-                return NotFound("Account not found");
-            }
-
-            return null;
         }
 
         // PUT: api/Utilisateur
@@ -92,13 +71,16 @@ namespace Api_dotnet.Controllers
 
         // POST: api/Utilisateur
         [HttpPost]
-        public async Task<ActionResult<Utilisateur>> PostUtilisateur(Utilisateur utilisateur)
+        public async Task<ActionResult<Utilisateur>> Register(Utilisateur utilisateur)
         {
 
             if (UtilisateurExists(utilisateur.Id))
             {
                 return Conflict("utilisateur already exist");
             }
+            Console.WriteLine(utilisateur);
+
+            utilisateur.MotDePasse = BCrypt.Net.BCrypt.HashPassword(utilisateur.MotDePasse);
 
             _context.Utilisateur.Add(utilisateur);
 

@@ -149,3 +149,4 @@ E:\Google_Drive\Efficom\Master 1\.NET\projet_back\Api_dotnet\obj\Debug\net5.0\Ap
 E:\Google_Drive\Efficom\Master 1\.NET\projet_back\Api_dotnet\obj\Debug\net5.0\Api_dotnet.csproj.CopyComplete
 E:\Google_Drive\Efficom\Master 1\.NET\projet_back\Api_dotnet\obj\Debug\net5.0\Api_dotnet.genruntimeconfig.cache
 E:\Google_Drive\Efficom\Master 1\.NET\projet_back\Api_dotnet\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\Google_Drive\Efficom\Master 1\.NET\projet_back\Api_dotnet\bin\Debug\net5.0\BCrypt.Net-Next.dll
