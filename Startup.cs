@@ -29,19 +29,20 @@ namespace Api_dotnet
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddCors(options =>
+           /*  services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("http://example.com/",
-                                            "http://www.contoso.com/%22");
-
+                        builder.WithOrigins("https://localhost:5005/");
                     });
-            });
+            }); */
 
             services.AddControllers();
-
+            services.AddCors(options => 
+{
+    options.AddPolicy("AllowAnyCorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+});
             services.AddTransient<IJwtTokenService, JwtTokenService>();
 
             services.AddAuthentication(options =>
@@ -95,11 +96,11 @@ namespace Api_dotnet
             app.UseAuthentication();
 
             app.UseRouting();
+            app.UseCors("AllowAnyCorsPolicy");
 
             app.UseAuthorization();
-
-            app.UseCors();
-
+            //app.UseMvc();
+            /* app.UseCors(options => options.WithOrigins("https://localhost:5005/").AllowAnyMethod()); */
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
