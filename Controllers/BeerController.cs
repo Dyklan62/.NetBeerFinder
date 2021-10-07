@@ -12,9 +12,9 @@ namespace Api_dotnet.Controllers
     [ApiController]
     public class BeerController : ControllerBase
     {
-        private readonly BeerContext _context;
+        private readonly AppDbContext _context;
 
-        public BeerController(BeerContext context)
+        public BeerController(AppDbContext context)
         {
             _context = context;
         }
@@ -23,14 +23,14 @@ namespace Api_dotnet.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Beer>>> GetBeer()
         {
-            return await _context.Beer.ToListAsync();
+            return await _context.Beers.ToListAsync();
         }
 
         // GET: api/Beer/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Beer>> GetBeer(long id)
         {
-            var beer = await _context.Beer.FindAsync(id);
+            var beer = await _context.Beers.FindAsync(id);
 
             if (beer == null)
             {
@@ -72,7 +72,7 @@ namespace Api_dotnet.Controllers
         [HttpPost]
         public async Task<ActionResult<Beer>> PostUtilisateur(Beer beer)
         {
-            _context.Beer.Add(beer);
+            _context.Beers.Add(beer);
 
             try
             {
@@ -90,13 +90,13 @@ namespace Api_dotnet.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBeer(long id)
         {
-            var beer = await _context.Beer.FindAsync(id);
+            var beer = await _context.Beers.FindAsync(id);
             if (beer == null)
             {
                 return NotFound();
             }
 
-            _context.Beer.Remove(beer);
+            _context.Beers.Remove(beer);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -104,12 +104,12 @@ namespace Api_dotnet.Controllers
 
         private bool BeerExists(long Id)
         {
-            return _context.Beer.Any(e => e.Id == Id);
+            return _context.Beers.Any(e => e.Id == Id);
         }
 
         private bool IsBeerUpdate(Beer beer)
         {
-            return _context.Beer.Any(e => e == beer);
+            return _context.Beers.Any(e => e == beer);
         }
     }
 }

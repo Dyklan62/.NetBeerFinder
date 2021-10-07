@@ -12,9 +12,9 @@ namespace Api_dotnet.Controllers
     [ApiController]
     public class UtilisateurController : ControllerBase
     {
-        private readonly UtilisateurContext _context;
+        private readonly AppDbContext _context;
 
-        public UtilisateurController(UtilisateurContext context)
+        public UtilisateurController(AppDbContext context)
         {
             _context = context;
         }
@@ -42,15 +42,15 @@ namespace Api_dotnet.Controllers
 
         // GET: api/Utilisateur/login
         [HttpGet("login")]
-        public async Task<ActionResult<Utilisateur>> Login(string email, string mdp)
+        public async Task<ActionResult<Utilisateur>> Login(Utilisateur user)
         {
 
-            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(mdp))
+            if (String.IsNullOrEmpty(user.Email) || String.IsNullOrEmpty(user.MotDePasse))
             {
                 return BadRequest("Please enter login informations");
             }
 
-            var utilisateur = await _context.Utilisateur.FindAsync(email);
+            var utilisateur = await _context.Utilisateur.FindAsync(user);
 
             if (utilisateur == null)
             {
@@ -137,5 +137,6 @@ namespace Api_dotnet.Controllers
         {
             return _context.Utilisateur.Any(e => e == utilisateur);
         }
+
     }
 }

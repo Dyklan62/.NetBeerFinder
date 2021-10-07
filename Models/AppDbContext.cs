@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Models
 {
-    public class BeerContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public BeerContext(DbContextOptions<BeerContext> options)
+
+        public DbSet<Beer> Beers { get; set; }
+        public DbSet<Utilisateur> Utilisateur { get; set; }
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Beer> Beer { get; set; }
     }
 }

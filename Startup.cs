@@ -1,4 +1,8 @@
 using System;
+using System.Text;
+using JwtAuthentication.Server.Service;
+using JwtAuthentification.server.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models;
 
@@ -37,25 +42,39 @@ namespace Api_dotnet
 
             services.AddControllers();
 
+            services.AddTransient<IJwtTokenService, JwtTokenService>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    };
+                });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+
             var serverVersion = new MySqlServerVersion(new Version(5, 7, 24));
 
-            services.AddDbContext<BeerContext>(
+            services.AddDbContext<AppDbContext>(
                 dbContextOptions => dbContextOptions
                     .UseMySql(this.Configuration.GetConnectionString("DefaultConnection"), serverVersion)
                     .LogTo(Console.WriteLine, LogLevel.Information)
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors()
             );
-
-            services.AddDbContext<UtilisateurContext>(
-                        dbContextOptions => dbContextOptions
-                            .UseMySql(this.Configuration.GetConnectionString("DefaultConnection"), serverVersion)
-                            .LogTo(
-                            Console.WriteLine, LogLevel.Information)
-                            .EnableSensitiveDataLogging()
-                            .EnableDetailedErrors()
-                    );
-
 
 
             services.AddSwaggerGen(c =>
@@ -75,9 +94,11 @@ namespace Api_dotnet
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
             app.UseCors();
+
+            app.UseAuthentication();
+
+            app.UseRouting();
 
             app.UseAuthorization();
 
