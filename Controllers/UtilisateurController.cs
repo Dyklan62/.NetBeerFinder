@@ -71,7 +71,7 @@ namespace Api_dotnet.Controllers
 
         // POST: api/Utilisateur
         [HttpPost]
-        public async Task<ActionResult<Utilisateur>> Register(Utilisateur utilisateur)
+        public async Task<ActionResult<Utilisateur>> Register( [FromBody]  Utilisateur utilisateur)
         {
             if (UtilisateurExists(utilisateur.Id))
             {
