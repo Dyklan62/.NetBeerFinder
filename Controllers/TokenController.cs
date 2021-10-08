@@ -1,13 +1,10 @@
 using System.Linq;
 using System;
 using System.Threading.Tasks;
-using JwtAuthentication.Server.Service;
 using JwtAuthentification.server.Interface;
-using JwtAuthentification.server.Interface.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using BC = BCrypt.Net.BCrypt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -40,7 +37,7 @@ namespace JwtAuthentication.Server.Controllers
                 return BadRequest("email or password empty");
             }
 
-            var utilisateur = _context.Utilisateur.Single(u => u.Email.Equals(login.Email)); ;
+            var utilisateur = _context.Utilisateur.SingleOrDefault(u => u.Email.Equals(login.Email));
 
 
             if (utilisateur == null)

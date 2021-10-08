@@ -73,13 +73,10 @@ namespace Api_dotnet.Controllers
         [HttpPost]
         public async Task<ActionResult<Utilisateur>> Register(Utilisateur utilisateur)
         {
-
             if (UtilisateurExists(utilisateur.Id))
             {
                 return Conflict("utilisateur already exist");
             }
-            Console.WriteLine(utilisateur);
-
             utilisateur.MotDePasse = BCrypt.Net.BCrypt.HashPassword(utilisateur.MotDePasse);
 
             _context.Utilisateur.Add(utilisateur);

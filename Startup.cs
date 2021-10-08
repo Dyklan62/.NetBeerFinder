@@ -29,17 +29,17 @@ namespace Api_dotnet
         public void ConfigureServices(IServiceCollection services)
         {
 
-           /*  services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins("https://localhost:5005/");
-                    });
-            }); */
+            /*  services.AddCors(options =>
+             {
+                 options.AddDefaultPolicy(
+                     builder =>
+                     {
+                         builder.WithOrigins("https://localhost:5005/");
+                     });
+             }); */
 
             services.AddControllers();
-            services.AddCors(options => 
+            services.AddCors(options =>
 {
     options.AddPolicy("AllowAnyCorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 });
@@ -76,10 +76,36 @@ namespace Api_dotnet
             );
 
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api_dotnet", Version = "v1" });
-            });
+            services.AddSwaggerGen(swagger =>
+                        {
+                            swagger.SwaggerDoc("v1", new OpenApiInfo
+                            {
+                                Title = "aspnet_lot1",
+                                Version = "v1"
+                            });
+                            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                            {
+                                Name = "Authorization",
+                                Type = SecuritySchemeType.ApiKey,
+                                Scheme = "Bearer",
+                                BearerFormat = "JWT",
+                                In = ParameterLocation.Header,
+                            });
+                            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                            {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                            });
+                        });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

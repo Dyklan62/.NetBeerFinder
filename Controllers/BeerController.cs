@@ -43,10 +43,10 @@ namespace Api_dotnet.Controllers
         }
 
         // GET: api/Beer/Type
-        [HttpGet("search/{Type}")]
+        [HttpGet("search/Type/{Type}")]
         public async Task<IActionResult> GetBeerByType(string type)
         {
-            var beers = await _context.Beers.FirstAsync(e => e.Type == type); ;
+            var beers = await _context.Beers.FirstAsync(e => e.Type == type);
             if (beers == null)
             {
                 return NotFound();
@@ -56,10 +56,10 @@ namespace Api_dotnet.Controllers
         }
 
         // GET: api/Beer/Name
-        [HttpGet("search/{Name}")]
+        [HttpGet("search/Name/{Name}")]
         public async Task<IActionResult> GetBeerByName(string name)
         {
-            var beers = await _context.Beers.FirstAsync(e => e.Name == name); ;
+            var beers = await _context.Beers.FirstAsync(e => e.Name == name);
             if (beers == null)
             {
                 return NotFound();
@@ -96,10 +96,9 @@ namespace Api_dotnet.Controllers
             return Ok("Beer update");
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         // POST: api/Beer
         [HttpPost]
-        public async Task<ActionResult<Beer>> PostUtilisateur(Beer beer)
+        public async Task<ActionResult<Beer>> PostBeer(Beer beer)
         {
             _context.Beers.Add(beer);
 
